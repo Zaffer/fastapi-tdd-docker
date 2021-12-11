@@ -10,7 +10,6 @@ ENV PYTHONUNBUFFERED 1
 ENV POETRY_VIRTUALENVS_CREATE false
 
 # install system dependencies
-COPY ./pyproject.toml ./poetry.lock ./
 RUN apt-get update \
   && apt-get -y install netcat gcc \
   && apt-get clean
