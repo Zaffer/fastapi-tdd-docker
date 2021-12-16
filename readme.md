@@ -4,7 +4,6 @@
 
 
 # Dev
-
 `uvicorn app.main:app --reload`
 
 
@@ -66,7 +65,7 @@ Let's review some useful pytest commands:
 docker-compose up -d --build
 ```
 ```
-docker-compose exec app python -m pytest --cov="." --cov-report html
+docker-compose exec web python -m pytest --cov="." --cov-report html
 ```
 
 ## Quality
