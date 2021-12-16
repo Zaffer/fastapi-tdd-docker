@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.8.11-slim-buster
+FROM python:3.9.6-slim-buster
 
 # create directory for the app user
 RUN mkdir -p /home/app
@@ -38,7 +38,7 @@ COPY . .
 RUN chown -R app:app ${APP_HOME}
 
 # change to the app user
-# USER app
+USER app
 
 # run gunicorn
 CMD gunicorn --bind 0.0.0.0:${PORT} app.main:app -k uvicorn.workers.UvicornWorker
