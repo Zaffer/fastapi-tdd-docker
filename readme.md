@@ -23,6 +23,10 @@
 # Pytest Commands
 Let's review some useful pytest commands:
 
+## build the container first
+`docker-compose up -d --build`
+
+
 ## normal run
 `$ docker-compose exec web python -m pytest`
 
@@ -49,3 +53,28 @@ Let's review some useful pytest commands:
 
 ## list the 2 slowest tests
 `$ docker-compose exec web python -m pytest --durations=2`
+
+
+## Run the tests with coverage:
+`$ docker-compose exec web python -m pytest --cov="."`
+
+
+## Testing
+```
+docker-compose up -d --build
+```
+```
+docker-compose exec app python -m pytest --cov="." --cov-report html
+```
+
+## Quality
+```
+docker-compose up -d --build
+```
+```
+docker-compose exec web flake8 .
+docker-compose exec web black . --check
+docker-compose exec web isort . --check-only
+```
+
+
