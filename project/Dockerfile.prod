@@ -40,5 +40,9 @@ RUN chown -R app:app ${APP_HOME}
 # change to the app user
 USER app
 
+# add entrypoint.sh
+COPY ./entrypoint.sh .
+RUN chmod +x /usr/src/app/entrypoint.sh
+
 # run gunicorn
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
