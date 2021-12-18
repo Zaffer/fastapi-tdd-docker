@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.9.6-slim-buster
+FROM python:3.9-slim
 
 # create directory for the app user
 RUN mkdir -p /home/app
@@ -41,4 +41,4 @@ RUN chown -R app:app ${APP_HOME}
 USER app
 
 # run gunicorn
-CMD gunicorn --bind 0.0.0.0:${PORT} app.main:app -k uvicorn.workers.UvicornWorker
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
