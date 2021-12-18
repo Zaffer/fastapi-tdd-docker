@@ -42,7 +42,7 @@ USER app
 
 # add entrypoint.sh
 COPY ./entrypoint.sh .
-RUN chmod +x /usr/src/app/entrypoint.sh
+RUN chmod +x /home/app/entrypoint.sh
 
 # run gunicorn
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+ENTRYPOINT ["/home/app/entrypoint.sh"]
