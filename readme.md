@@ -65,6 +65,9 @@ Let's review some useful pytest commands:
 docker-compose up -d --build
 ```
 ```
+docker-compose exec web python -m pytest
+```
+```
 docker-compose exec web python -m pytest --cov="." --cov-report html
 ```
 

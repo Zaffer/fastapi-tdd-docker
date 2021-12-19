@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-# ENV POETRY_VIRTUALENVS_CREATE false
+ENV POETRY_VIRTUALENVS_CREATE false
 
 # install system dependencies
 RUN apt-get update \

@@ -29,8 +29,8 @@ RUN apt-get update \
 RUN pip install --upgrade pip \
   && pip install --no-cache-dir poetry
 COPY ./pyproject.toml ./poetry.lock ./
-# RUN poetry install --no-root --no-interaction --no-ansi --no-dev
-RUN poetry install --no-root --no-interaction --no-ansi
+RUN poetry install --no-root --no-interaction --no-ansi --no-dev
+# RUN poetry install --no-root --no-interaction --no-ansi
 
 # add app
 COPY . .
