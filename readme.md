@@ -70,6 +70,9 @@ docker-compose exec web python -m pytest
 ```
 docker-compose exec web python -m pytest --cov="." --cov-report html
 ```
+```
+docker-compose exec web pytest -k "unit" -n auto
+```
 
 ## Quality
 ```

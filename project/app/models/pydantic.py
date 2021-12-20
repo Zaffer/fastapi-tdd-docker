@@ -6,7 +6,7 @@ class SummaryPayloadSchema(BaseModel):
 
 
 class SummaryResponseSchema(SummaryPayloadSchema):
-    id: str
+    id: int
 
 
 class SummaryUpdatePayloadSchema(SummaryPayloadSchema):
