@@ -1,45 +1,95 @@
+# BASE #
+
 # pull official base image
-FROM python:3.9-slim
+FROM python:3.9-slim as base
 
-# create directory for the app user
-RUN mkdir -p /home/app
-
-# create the app user
-RUN addgroup --system app && adduser --system --group app
-
-# create the appropriate directories
-ENV HOME=/home/app
-ENV APP_HOME=/home/app/web
-RUN mkdir ${APP_HOME}
-WORKDIR ${APP_HOME}
+# set work directory
+WORKDIR /app
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV POETRY_VIRTUALENVS_CREATE false
-ENV ENVIRONMENT prod
-ENV TESTING 0
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# set virtual environment variables and add to path
+# ENV VIRTUAL_ENV=/venv
+# RUN python3 -m venv ${VIRTUAL_ENV}
+# ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
 
 # install system dependencies
-RUN apt-get update \
-  && apt-get -y install netcat gcc postgresql \
+RUN apt-get -y update \
+  && apt-get -y upgrade \
+  # && apt-get -y install netcat gcc postgresql \
   && apt-get clean
+
+
+# BUILDER #
+FROM base as builder
+
+# ENV POETRY_VIRTUALENVS_CREATE false
+ENV POETRY_VIRTUALENVS_IN_PROJECT true
 
 # install python dependencies
 RUN pip install --upgrade pip \
   && pip install --no-cache-dir poetry
+# RUN python -m venv /venv
 COPY ./pyproject.toml ./poetry.lock ./
+# RUN . /venv/bin/activate && poetry install --no-root --no-interaction --no-ansi --no-dev
 RUN poetry install --no-root --no-interaction --no-ansi --no-dev
-# RUN poetry install --no-root --no-interaction --no-ansi
+
+# copy files and build wheels
+# COPY . /app/
+# RUN . /venv/bin/activate && poetry build
+
+# lint
+# RUN pip install black flake8 isort
+# RUN flake8 .
+# RUN black --exclude=migrations .
+# RUN isort .
+
+
+# FINAL #
+FROM base as final
+
+# set environment variables
+ENV ENVIRONMENT=prod \
+    TESTING=0
+
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+
+# create directory for the app user
+# RUN mkdir -p /app
+
+# create the app user
+RUN addgroup --system app && adduser --system --group app
+
+# # create the appropriate directories
+# ENV HOME=/app
+# ENV APP_HOME=/app/web
+# RUN mkdir ${APP_HOME}
+# WORKDIR ${APP_HOME}
+
+
+# install python dependencies
+COPY --from=builder /app /app
+# COPY --from=builder /venv /venv
+# COPY --from=builder /app/dist .
+
+# RUN . /venv/bin/activate && pip install *.whl
+# RUN pip install *.whl
 
 # add app
-COPY . .
+ADD . .
 
 # chown all the files to the app user
-RUN chown -R app:app ${APP_HOME}
+RUN chown -R app:app /app
 
 # change to the app user
 USER app
 
 # run gunicorn
 CMD gunicorn --bind 0.0.0.0:${PORT} app.main:app -k uvicorn.workers.UvicornWorker
+
+# Infinite loop to keep container live doing nothing
+# CMD sh -c "while true; do sleep 1; done"

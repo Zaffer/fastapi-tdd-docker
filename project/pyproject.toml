@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fastapi-tdd-docker"
+name = "app"
 version = "0.1.0"
 description = "testdriven.io tut"
 authors = ["James"]
