@@ -95,3 +95,13 @@ docker login docker.pkg.github.com -u <USERNAME> -p <TOKEN>
 `
 docker push docker.pkg.github.com/zaffer/fastapi-tdd-docker/summarizer:latest
 `
+
+## COMMANDS:
+$ docker-compose down -v
+$ docker-compose up -d --build
+$ docker-compose exec web aerich upgrade
+
+$ docker-compose exec web python -m pytest
+$ docker-compose exec web flake8 .
+$ docker-compose exec web black .
+$ docker-compose exec web isort .

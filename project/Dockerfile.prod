@@ -41,10 +41,10 @@ RUN poetry install --no-root --no-interaction --no-ansi --no-dev
 # RUN . /venv/bin/activate && poetry build
 
 # lint
-# RUN pip install black flake8 isort
-# RUN flake8 .
-# RUN black --exclude=migrations .
-# RUN isort .
+RUN pip install black flake8 isort
+RUN flake8 .
+RUN black --exclude=migrations .
+RUN isort .
 
 
 # FINAL #
