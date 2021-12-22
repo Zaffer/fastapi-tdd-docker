@@ -3,30 +3,8 @@
 ![Continuous Integration and Delivery](https://github.com/Zaffer/fastapi-tdd-docker/workflows/Continuous%20Integration%20and%20Delivery/badge.svg?branch=master)
 
 
-# Dev
-`uvicorn app.main:app --reload`
-
-
-# Build
-`docker-compose build`
-
-
-# Run
-`docker-compose up -d`
-
-
-# Database
-`docker-compose exec web-db psql -U postgres`
-`\c web_dev`
-`\q`
-
-
 # Pytest Commands
 Let's review some useful pytest commands:
-
-## build the container first
-`docker-compose up -d --build`
-
 
 ## normal run
 `$ docker-compose exec web python -m pytest`
@@ -60,32 +38,8 @@ Let's review some useful pytest commands:
 `$ docker-compose exec web python -m pytest --cov="."`
 
 
-## Testing
-```
-docker-compose up -d --build
-```
-```
-docker-compose exec web python -m pytest
-```
-```
-docker-compose exec web python -m pytest --cov="." --cov-report html
-```
-```
-docker-compose exec web pytest -k "unit" -n auto
-```
-
-## Quality
-```
-docker-compose up -d --build
-```
-```
-docker-compose exec web flake8 .
-docker-compose exec web black . --check
-docker-compose exec web isort . --check-only
-```
 
 ## Github Actions
-
 `
 docker build -f project/Dockerfile.prod -t docker.pkg.github.com/zaffer/fastapi-tdd-docker/summarizer:latest ./project
 `
@@ -96,12 +50,64 @@ docker login docker.pkg.github.com -u <USERNAME> -p <TOKEN>
 docker push docker.pkg.github.com/zaffer/fastapi-tdd-docker/summarizer:latest
 `
 
-## COMMANDS:
-$ docker-compose down -v
-$ docker-compose up -d --build
+## Common Commands
+Build the images:
+`$ docker-compose build`
+
+Run the containers:
+`$ docker-compose up -d`
+
+Apply the migrations:
+```
 $ docker-compose exec web aerich upgrade
 
-$ docker-compose exec web python -m pytest
-$ docker-compose exec web flake8 .
+# prefer just to apply the latest changes to the database, without the migrations?
+# $ docker-compose exec web python app/db.py
+```
+
+Run the tests:
+`$ docker-compose exec web python -m pytest`
+
+Run the tests with coverage:
+`$ docker-compose exec web python -m pytest --cov="."`
+
+Lint:
+`$ docker-compose exec web flake8 .`
+
+Run Black and isort with check options:
+```
+$ docker-compose exec web black . --check
+$ docker-compose exec web isort . --check-only
+```
+
+Make code changes with Black and isort:
+```
 $ docker-compose exec web black .
 $ docker-compose exec web isort .
+```
+
+`docker build --no-cache -f project/Dockerfile.prod -t web ./project `
+`docker run --name fastapi-tdd -e PORT=8765 -e DATABASE_URL=sqlite://sqlite.db -p 5003:8765 web:latest`
+
+# Other Commands
+To stop the containers:
+`$ docker-compose stop`
+
+To bring down the containers:
+`$ docker-compose down`
+
+Want to force a build?
+`$ docker-compose build --no-cache`
+
+Remove images:
+`$ docker rmi $(docker images -q)`
+
+# Postgres
+Want to access the database via psql?
+`$ docker-compose exec web-db psql -U postgres`
+
+Then, you can connect to the database and run SQL queries. For example:
+```
+# \c web_dev
+# select * from textsummary;
+```

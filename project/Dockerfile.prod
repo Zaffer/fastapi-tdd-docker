@@ -11,9 +11,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 # set virtual environment variables and add to path
-# ENV VIRTUAL_ENV=/venv
-# RUN python3 -m venv ${VIRTUAL_ENV}
-# ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
+ENV VIRTUAL_ENV=/venv
+RUN python3 -m venv ${VIRTUAL_ENV}
+ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
 
 # install system dependencies
 RUN apt-get -y update \
@@ -25,16 +25,15 @@ RUN apt-get -y update \
 # BUILDER #
 FROM base as builder
 
-# ENV POETRY_VIRTUALENVS_CREATE false
-ENV POETRY_VIRTUALENVS_IN_PROJECT true
+ENV POETRY_VIRTUALENVS_CREATE false
+# ENV POETRY_VIRTUALENVS_IN_PROJECT true
 
 # install python dependencies
 RUN pip install --upgrade pip \
   && pip install --no-cache-dir poetry
-# RUN python -m venv /venv
 COPY ./pyproject.toml ./poetry.lock ./
-# RUN . /venv/bin/activate && poetry install --no-root --no-interaction --no-ansi --no-dev
-RUN poetry install --no-root --no-interaction --no-ansi --no-dev
+RUN . /venv/bin/activate && poetry install --no-root --no-interaction --no-ansi --no-dev
+# RUN poetry install --no-root --no-interaction --no-ansi --no-dev
 
 # copy files and build wheels
 # COPY . /app/
@@ -54,10 +53,6 @@ FROM base as final
 ENV ENVIRONMENT=prod \
     TESTING=0
 
-
-ENV PATH="/app/.venv/bin:$PATH"
-
-
 # create directory for the app user
 # RUN mkdir -p /app
 
@@ -72,15 +67,16 @@ RUN addgroup --system app && adduser --system --group app
 
 
 # install python dependencies
-COPY --from=builder /app /app
-# COPY --from=builder /venv /venv
+# COPY --from=builder /app /app
+COPY --from=builder /venv /venv
 # COPY --from=builder /app/dist .
 
 # RUN . /venv/bin/activate && pip install *.whl
 # RUN pip install *.whl
 
 # add app
-ADD . .
+# ADD . .
+COPY . .
 
 # chown all the files to the app user
 RUN chown -R app:app /app
