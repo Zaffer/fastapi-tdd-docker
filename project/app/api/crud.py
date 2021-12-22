@@ -1,7 +1,8 @@
 from typing import List, Optional
 
-from app.models.pydantic import SummaryPayloadSchema
+from app.models.pydantic import SummaryPayloadSchema, SummaryPayloadSchemaText, SummaryResponseSchemaText
 from app.models.tortoise import TextSummary
+from app.summarizer import generate_summary_from_text
 
 
 async def post(payload: SummaryPayloadSchema) -> int:
@@ -11,6 +12,25 @@ async def post(payload: SummaryPayloadSchema) -> int:
     )
     await summary.save()
     return summary.id
+
+
+async def post_text(payload: SummaryPayloadSchemaText) -> SummaryResponseSchemaText:
+
+    summary_text = await generate_summary_from_text(text=payload.text)
+
+    summary = TextSummary(
+        url=' ',
+        summrary=summary_text,
+    )
+    await summary.save()
+
+    response_object = {
+        "id": summary.id,
+        "text": payload.text,
+        "summary": summary.summrary,
+    }
+
+    return response_object
 
 
 async def get(id: int) -> Optional[dict]:

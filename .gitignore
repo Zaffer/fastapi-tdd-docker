@@ -4,8 +4,8 @@ __pychache__
 .pytest_cache/
 *.pyc
 
-env
-venv
+env/
+venv/
 .env
 .venv
 

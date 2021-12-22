@@ -4,11 +4,13 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, Path
 
 from app.api import crud
 from app.models.tortoise import SummarySchema
-from app.summarizer import generate_summary
+from app.summarizer import generate_summary, generate_summary_from_text
 
 from app.models.pydantic import (  # isort:skip
     SummaryPayloadSchema,
+    SummaryPayloadSchemaText,
     SummaryResponseSchema,
+    SummaryResponseSchemaText,
     SummaryUpdatePayloadSchema,
 )
 
@@ -27,6 +29,16 @@ async def create_summary(
         "id": summary_id,
         "url": payload.url,
     }
+    return response_object
+
+
+@router.post("/text/", response_model=SummaryResponseSchemaText, status_code=201)
+async def create_summary_from_text(
+    payload: SummaryPayloadSchemaText,
+) -> SummaryResponseSchema:
+
+    response_object = await crud.post_text(payload)
+
     return response_object
 
 
